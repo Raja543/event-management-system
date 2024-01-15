@@ -45,7 +45,7 @@ const Login = () => {
       if (success) {
         handleSuccess(message);
         setTimeout(() => {
-          navigate("/home");
+          navigate("/");
         }, 1000);
       } else {
         handleError(message);
@@ -73,7 +73,7 @@ const Login = () => {
           Event <span className="text-[#7848F4]">Hive</span>
         </h1>
         <h2 className="text-4xl font-bold py-4 text-center">
-          Sign up to Event Hive
+          Sign In to Event Hive
         </h2>
         <div className="flex flex-col py-10">
           <label htmlFor="email" className="text-lg py-1 px-1">
@@ -94,7 +94,7 @@ const Login = () => {
           </label>
           <div className="relative my-2">
             <input
-              type="password"
+              type={passwordType}
               value={password}
               name="password"
               placeholder="Enter password"
@@ -134,14 +134,14 @@ const Login = () => {
           <span>Sign In with Google</span>
         </button>
       </div>
-      <div className="w-2/5">
+      <div className="w-2/5 min-h-screen flex items-center justify-center bg-[#ffff]">
         <img
-          src="/assets/images/signin-cover.svg"
-          alt="login-cover-page"
-          className=""
+          class="w-full h-full object-cover"
+          src="assets/images/signin-cover.svg"
+          loading="lazy"
+          alt="signin-cover"
         />
       </div>
-
       <ToastContainer />
     </div>
   );
