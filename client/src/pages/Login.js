@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import { HashLink } from "react-router-hash-link";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -23,11 +24,11 @@ const Login = () => {
 
   const handleError = (err) =>
     toast.error(err, {
-      position: "bottom-left",
+      position: "top-right",
     });
   const handleSuccess = (msg) =>
     toast.success(msg, {
-      position: "bottom-left",
+      position: "top-right",
     });
 
   const handleSubmit = async (e) => {
@@ -68,14 +69,21 @@ const Login = () => {
 
   return (
     <div className="flex flex-row bg-[#F8F8FA] ">
-      <div className="w-3/5 flex flex-col p-24">
+      <div className="w-2/5 flex items-center justify-center bg-[#ffff]">
+        <img
+          className="w-full h-full object-cover"
+          src="/assets/images/signup-cover.svg"
+          alt="signup-cover"
+        />
+      </div>
+      <form className="w-3/5 flex flex-col p-20">
         <h1 className="text-3xl font-bold py-4 text-center">
           Event <span className="text-[#7848F4]">Hive</span>
         </h1>
         <h2 className="text-4xl font-bold py-4 text-center">
-          Sign In to Event Hive
+          Sign in to Event Hive
         </h2>
-        <div className="flex flex-col py-10">
+        <div className="flex flex-col py-8">
           <label htmlFor="email" className="text-lg py-1 px-1">
             Email
           </label>
@@ -116,32 +124,29 @@ const Login = () => {
           <button
             type="submit"
             onClick={handleSubmit}
-            className="bg-[#7848F4] text-white text-xl px-10 py-3 rounded-lg my-4 w-60 mx-auto "
+            className="bg-[#7848F4] text-white text-xl px-10 py-3 rounded-lg my-2 w-60 mx-auto "
           >
-            Signin
+            Login
           </button>
+          <p className="my-2 text-[#7E7E7E] text-center text-2xl">Or</p>
+
+          <button className="px-10 py-2 border flex gap-2 border-slate-200 max-w-fit rounded-lg mx-auto bg-[#ffff]">
+            <img
+              className="w-6 h-6"
+              src="assets/images/google-logo.svg"
+              loading="lazy"
+              alt="google logo"
+            />
+            <span>Login with Google</span>
+          </button>
+          <p className="text-lg cursor-pointer text-center py-2">
+            Don't have an account?
+            <HashLink to="/signup" smooth>
+              <span className="text-[#7848F4]"> Sign up</span>
+            </HashLink>
+          </p>
         </div>
-
-        <p className="my-8 text-[#7E7E7E] text-center text-2xl">Or</p>
-
-        <button class="px-10 py-2 border flex gap-2 border-slate-200 max-w-fit rounded-lg mx-auto bg-[#ffff]">
-          <img
-            class="w-6 h-6"
-            src="assets/images/google-logo.svg"
-            loading="lazy"
-            alt="google logo"
-          />
-          <span>Sign In with Google</span>
-        </button>
-      </div>
-      <div className="w-2/5 min-h-screen flex items-center justify-center bg-[#ffff]">
-        <img
-          class="w-full h-full object-cover"
-          src="assets/images/signin-cover.svg"
-          loading="lazy"
-          alt="signin-cover"
-        />
-      </div>
+      </form>
       <ToastContainer />
     </div>
   );
