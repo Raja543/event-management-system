@@ -27,22 +27,13 @@ const Footer = () => {
           <button className="px-4 rounded-md text-white ml-4">French</button>
         </div>
         <div className="flex flex-row items-center justify-center gap-6 cursor-pointer">
-          <img
-            src="https://img.icons8.com/ios-filled/50/ffffff/facebook.png"
-            className="w-8 h-8"
-          />
-          <img
-            src="https://img.icons8.com/ios-filled/50/ffffff/twitter.png"
-            className="w-8 h-8"
-          />
-          <img
-            src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png"
-            className="w-8 h-8"
-          />
+          <img src="/assets/images/LinkedinLogo.svg" className="w-8 h-8" />
+          <img src="/assets/images/InstagramLogo.svg" className="w-8 h-8" />
+          <img src="/assets/images/FacebookLogo.svg" className="w-8 h-8" />
         </div>
         <div>
           <p className="text-[#fff] font-bold">
-            © 2024 Event Hive. All rights reserved.
+            © {new Date().getFullYear()} Event Hive. All rights reserved.
           </p>
         </div>
       </div>
