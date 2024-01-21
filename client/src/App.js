@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Error from "./pages/Error";
+import CreateEvent from "./pages/CreateEvent";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/create-event" element={<CreateEvent />} />
           <Route path="*" element={<Error />} />
           <Route path="/error" element={<Error />} />
         </Routes>

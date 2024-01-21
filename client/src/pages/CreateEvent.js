@@ -1,17 +1,16 @@
 import React from "react";
 import Navbar from "../components/Navbar";
+import EventForm from "../components/EventForm";
 import Footer from "../components/Footer";
-import Hero from "../components/Hero";
 
-const Home = () => {
+const CreateEvent = () => {
   return (
-    <div>
+    <>
       <Navbar />
-      <Hero />
-      <h1>Home</h1>
+      <EventForm />
       <Footer />
-    </div>
+    </>
   );
 };
 
-export default Home;
+export default CreateEvent;

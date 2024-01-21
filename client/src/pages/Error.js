@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { HashLink } from "react-router-hash-link";
+import SocialIcons from "../components/SocialIcon";
 
 const Error = () => {
   return (
@@ -13,7 +14,7 @@ const Error = () => {
           alt="error-cover"
           className="w-1/2"
         />
-        <h1 className="text-4xl font-bold py-10">Oops!</h1>
+        <h1 className="text-4xl font-bold py-6">Oops!</h1>
         <p className="text-2xl opacity-50">
           We can’t seem to find the page you are looking for
         </p>
@@ -24,53 +25,7 @@ const Error = () => {
         </HashLink>
         <div className="py-6">
           <p className="text-xl text-center py-6">Follow us on</p>
-          <div className="flex flex-row items-center justify-center gap-5 cursor-pointer">
-            <HashLink to="">
-              <div className="bg-[#7848F4] bg-opacity-10 rounded-3xl p-4">
-                <img
-                  src="/assets/images/InstagramIcon.svg"
-                  className="w-full h-full"
-                  alt="instagram"
-                />
-              </div>
-            </HashLink>
-            <HashLink to="">
-              <div className="bg-[#7848F4] bg-opacity-10 rounded-3xl p-4">
-                <img
-                  src="/assets/images/FacebookIcon.svg"
-                  className="w-full h-full"
-                  alt="facebook"
-                />
-              </div>
-            </HashLink>
-            <HashLink to="">
-              <div className="bg-[#7848F4] bg-opacity-10 rounded-3xl p-4">
-                <img
-                  src="/assets/images/LinkedinIcon.svg"
-                  className="w-full h-full"
-                  alt="linkedin"
-                />
-              </div>
-            </HashLink>
-            <HashLink to="">
-              <div className="bg-[#7848F4] bg-opacity-10 rounded-3xl p-4">
-                <img
-                  src="/assets/images/TwitterIcon.svg"
-                  className="w-full h-full"
-                  alt="instagram"
-                />
-              </div>
-            </HashLink>
-            <HashLink to="">
-              <div className="bg-[#7848F4] bg-opacity-10 rounded-3xl p-4">
-                <img
-                  src="/assets/images/YoutubeIcon.svg"
-                  className="w-full h-full"
-                  alt="youtube"
-                />
-              </div>
-            </HashLink>
-          </div>
+          <SocialIcons />
         </div>
       </div>
       <Footer />
