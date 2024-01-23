@@ -5,7 +5,7 @@ const BrandItem = ({ src, alt }) => {
     <img
       src={src}
       alt={alt}
-      className="w-48 p-4"
+      className="w-52 p-4"
     />
   );
 };
