@@ -38,12 +38,14 @@ const Home = () => {
           <EventCard />
           <EventCard />
         </div>
-        <button
-          type="submit"
-          className="bg-[#7848F4] text-white text-lg px-6 py-3 rounded-lg my-8 mx-auto "
-        >
-          Load More...
-        </button>
+        <HashLink to="/event/all#top" className="mx-auto">
+          <button
+            type="submit"
+            className="bg-[#7848F4] text-white text-lg px-6 py-3 rounded-lg my-8"
+          >
+            Load More...
+          </button>
+        </HashLink>
       </div>
       {/* Event create section */}
       <div className="flex flex-row items-center justify-start  my-10 px-16 pb-0 bg-[#10107B]">
