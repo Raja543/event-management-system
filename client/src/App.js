@@ -8,6 +8,7 @@ import CreateEvent from "./pages/CreateEvent";
 import RegisterEvent from "./pages/RegisterEvent";
 import AllEvent from "./pages/AllEvent";
 import CollegeEvent from "./pages/CollegeEvent";
+import EventDetails from "./pages/EventDetails";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/event/register" element={<RegisterEvent />} />
           <Route path="/event/all" element={<AllEvent />} />
           <Route path="/event/college" element={<CollegeEvent />} />
+          <Route path="/event/details" element={<EventDetails />} />
           <Route path="*" element={<Error />} />
           <Route path="/error" element={<Error />} />
         </Routes>
