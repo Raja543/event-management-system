@@ -2,14 +2,18 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const authRoute = require("./Routes/AuthRoute");
+const authRoute = require("./routes/AuthRoute");
+const eventRoute = require("./routes/EventRoute");
 const app = express();
 dotenv.config();
 const { MONGO_URL, PORT } = process.env;
 
+// body-parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+// cors config
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -19,7 +23,8 @@ app.use(
   })
 );
 
-app.use("/", authRoute);
+// routing
+app.use("/", require("./routes"));
 
 //db cpnnection
 mongoose
