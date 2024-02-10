@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {createEvent , updateEvent , deleteEvent} = require("./EventController");
+const {createEvent , updateEvent , deleteEvent} = require("../controllers/EventController");
 const { checkEventExists } = require('../middlewares/EventMiddleware');
 
 
