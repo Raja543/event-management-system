@@ -2,8 +2,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const authRoute = require("./routes/AuthRoute");
-const eventRoute = require("./routes/EventRoute");
 const app = express();
 dotenv.config();
 const { MONGO_URL, PORT } = process.env;
