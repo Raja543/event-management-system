@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const config = require("./config/server");
+const routes = require("./routes");
 
 // Database connection
 const dbConnection = require("./db");
@@ -22,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/", require("./routes").default);
+app.use("/", routes);
 
 const PORT = config.port || 4000;
 

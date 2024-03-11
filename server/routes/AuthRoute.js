@@ -8,6 +8,6 @@ router.post('/signup', AuthController.Signup);
 router.post('/login', AuthController.Login);
 
 // Private route (authentication required)
-router.post('/refresh', authMiddleware.authenticateUser, AuthController.refreshToken);
-
+router.post('/refresh', authMiddleware.authenticateUser, AuthController.RefreshToken);
+ 
 module.exports = router;
