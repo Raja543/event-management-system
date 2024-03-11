@@ -1,4 +1,4 @@
-const Event = require('./EventModel');
+const Event = require('../models/EventModel');
 
 // Middleware to check if event exists by ID
 exports.checkEventExists = async (req, res, next) => {

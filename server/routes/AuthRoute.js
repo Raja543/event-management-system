@@ -1,9 +1,13 @@
-const router = require("express").Router();
-const { Signup, Login } = require("../controllers/AuthController");
-const { userVerification } = require("../middlewares/AuthMiddleware");
+const express = require('express');
+const router = express.Router();
+const AuthController = require('../controllers/AuthController');
+const authMiddleware = require('../middlewares/AuthMiddleware');
 
-router.post("/signup", Signup);
-router.post("/login", Login);
-router.post("/", userVerification);
+// Public routes (no authentication required)
+router.post('/signup', AuthController.Signup);
+router.post('/login', AuthController.Login);
+
+// Private route (authentication required)
+router.post('/refresh', authMiddleware.authenticateUser, AuthController.refreshToken);
 
 module.exports = router;

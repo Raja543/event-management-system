@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import Cookies from "js-cookie";
 import 'react-toastify/dist/ReactToastify.css';
 import { HashLink } from "react-router-hash-link";
 import { Eye, EyeOff } from "lucide-react";
@@ -35,7 +36,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/login",
+        `${BACKEND_URL}/api/login`,
         {
           ...inputValue,
         },
@@ -45,6 +46,7 @@ const Login = () => {
       const { success, message } = data;
       if (success) {
         handleSuccess(message);
+        Cookies.set("token", token, { expires: 2 });
         setTimeout(() => {
           navigate("/");
         }, 1000);

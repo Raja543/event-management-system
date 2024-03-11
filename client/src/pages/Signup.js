@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie"; 
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import { HashLink } from "react-router-hash-link";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -36,16 +37,17 @@ const Signup = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/signup",
+        `${BACKEND_URL}/api/signup`,
         {
           ...inputValue,
         },
         { withCredentials: true }
       );
       console.log(data);
-      const { success, message } = data;
+      const { success, message, token } = data;
       if (success) {
         handleSuccess(message);
+        Cookies.set("token", token, { expires: 7 }); // You can adjust the expiration time as needed
         setTimeout(() => {
           navigate("/");
         }, 1000);

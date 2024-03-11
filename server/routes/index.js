@@ -1,10 +1,9 @@
-const { Router } = require("express");
-const authRouters = require("./AuthRoute");
-const eventRouters = require("./EventRoute");
+const express = require("express");
+const router = express.Router();
+const authRouter = require("./AuthRoute"); 
+const eventRouter = require("./EventRoute");
 
-const router = Router();
-
-app.use("/api/auth", authRouters);
-app.use("/api/events",eventRouters);
+router.use('/api/auth', authRouter);
+router.use('/api/event', eventRouter);
 
 module.exports = router;
