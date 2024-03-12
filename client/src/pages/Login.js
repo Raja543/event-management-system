@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import Cookies from "js-cookie";
-import 'react-toastify/dist/ReactToastify.css';
+import { useCookies } from "react-cookie";
+import "react-toastify/dist/ReactToastify.css";
 import { HashLink } from "react-router-hash-link";
 import { Eye, EyeOff } from "lucide-react";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,6 +13,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const loginUser = useContext(AuthContext);
+  const [cookies, setCookie] = useCookies(["name", "Token", "email"]);
   const [passwordType, setPasswordType] = useState("password");
   const { email, password } = inputValue;
   const handleOnChange = (e) => {
@@ -35,32 +37,23 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        `${BACKEND_URL}/api/login`,
-        {
-          ...inputValue,
-        },
-        { withCredentials: true }
-      );
-      console.log(data);
-      const { success, message } = data;
-      if (success) {
-        handleSuccess(message);
-        Cookies.set("token", token, { expires: 2 });
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
+      const response = await loginUser({ email: email, password: password });
+      console.log("resposnse data ", response);
+
+      // Check if the login was successful
+      if (response.status) {
+        handleSuccess("login successful");
+        setCookie("name", response.username);
+        setCookie("Token", response.email);
+        setCookie("email", response.token);
+        console.log(cookies.Token);
+        navigate("/");
       } else {
-        handleError(message);
+        handleError("Invalid email or password", "Login failed");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error.message);
     }
-    setInputValue({
-      ...inputValue,
-      email: "",
-      password: "",
-    });
   };
 
   const handleClickShowPassword = () => {

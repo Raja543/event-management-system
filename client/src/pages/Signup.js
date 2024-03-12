@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import Cookies from "js-cookie"; 
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
+import { useCookies } from "react-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { HashLink } from "react-router-hash-link";
@@ -9,6 +10,7 @@ import { Eye, EyeOff } from "lucide-react";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const signupUser = useContext(AuthContext);
   const [inputValue, setInputValue] = useState({
     email: "",
     password: "",
@@ -36,21 +38,14 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        `${BACKEND_URL}/api/signup`,
-        {
-          ...inputValue,
-        },
-        { withCredentials: true }
-      );
-      console.log(data);
-      const { success, message, token } = data;
+      const response = await signupUser({ username: username, email: email, password: password });
+      console.log("resposnse data ", response);
       if (success) {
-        handleSuccess(message);
-        Cookies.set("token", token, { expires: 7 }); // You can adjust the expiration time as needed
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
+        handleSuccess("signup successful");
+        setCookie("name", response.username);
+        setCookie("Token", response.email);
+        setCookie("email", response.token);
+        navigate("/")
       } else {
         handleError(message);
       }
