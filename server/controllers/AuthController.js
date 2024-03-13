@@ -19,10 +19,12 @@ module.exports.Signup = async (req, res, next) => {
     res.cookie("accessToken", accessToken, {
       withCredentials: true,
       httpOnly: true,
+      secure : true
     });
     res.cookie("refreshToken", refreshToken, {
       withCredentials: true,
       httpOnly: true,
+      secure : true
     });
 
     res.status(201).json({ message: "User signed in successfully", success: true, user });
@@ -55,18 +57,24 @@ module.exports.Login = async (req, res, next) => {
     res.cookie("accessToken", accessToken, {
       withCredentials: true,
       httpOnly: true,
+      secure : true
     });
     res.cookie("refreshToken", refreshToken, {
       withCredentials: true,
       httpOnly: true,
+      secure : true
     });
 
     res.status(201).json({ message: "User logged in successfully", success: true });
+    console.log(accessToken, "this is refesh", refreshToken)
     next();
   } catch (error) {
     console.error(error);
   }
 };
+
+
+
 
 // Refresh token route
 module.exports.RefreshToken = async (req, res) => {

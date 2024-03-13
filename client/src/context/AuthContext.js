@@ -1,6 +1,8 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState , useContext } from "react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 
 export const AuthContext = createContext();
 
@@ -11,10 +13,10 @@ export const AuthProvider = ({ children }) => {
   ]);
   const [user, setUser] = useState(null);
 
-  const signupUser = async (userData) => {
+ const signup = async (userData) => {
     try {
       const response = await axios.post(
-        `${process.env.BACKEND_URL}/api/auth/signup`,
+        `${BACKEND_URL}/api/auth/signup`,
         userData
       );
       return response.data;
@@ -23,10 +25,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const loginUser = async (userData) => {
+  const login = async (userData) => {
     try {
       const response = await axios.post(
-        `${process.env.BACKEND_URL}/api/auth/login`,
+        `${BACKEND_URL}/api/auth/login`,
         userData,
         { withCredentials: true }
       );
@@ -40,9 +42,19 @@ export const AuthProvider = ({ children }) => {
       });
       setUser(response.data); // Set the user with the data from the response
     } catch (error) {
-      console.error("Login failed:", error.response.data);
+      if (error.response) {
+        // Request was made and server responded with a status code
+        console.error("Login failed:", error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error("No response received:", error.request);
+      } else {
+        // Something happened in setting up the request that triggered an error
+        console.error("Error:", error.message);
+      }
     }
   };
+  
 
   const logout = () => {
     removeCookie("accessToken", { path: "/" });
@@ -71,8 +83,8 @@ export const AuthProvider = ({ children }) => {
 
   const AuthContextValues = {
     user,
-    signupUser,
-    loginUser,
+    signup,
+    login,
     logout,
     refreshToken,
     isAuthenticated,
@@ -84,3 +96,12 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+

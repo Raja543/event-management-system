@@ -1,19 +1,19 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { useCookies } from "react-cookie";
 import "react-toastify/dist/ReactToastify.css";
 import { HashLink } from "react-router-hash-link";
 import { Eye, EyeOff } from "lucide-react";
-import { AuthContext } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     email: "",
     password: "",
   });
-  const loginUser = useContext(AuthContext);
   const [cookies, setCookie] = useCookies(["name", "Token", "email"]);
   const [passwordType, setPasswordType] = useState("password");
   const { email, password } = inputValue;
@@ -37,11 +37,11 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await loginUser({ email: email, password: password });
+      const response = await login({ email: email, password: password });
       console.log("resposnse data ", response);
 
       // Check if the login was successful
-      if (response.status) {
+      if (response.status == 201) {
         handleSuccess("login successful");
         setCookie("name", response.username);
         setCookie("Token", response.email);

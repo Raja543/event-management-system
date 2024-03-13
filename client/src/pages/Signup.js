@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-import { useContext } from "react";
+import { useAuth } from "../context/AuthContext";
 import { useCookies } from "react-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,14 +8,15 @@ import { HashLink } from "react-router-hash-link";
 import { Eye, EyeOff } from "lucide-react";
 
 const Signup = () => {
+  const { signup } = useAuth();
   const navigate = useNavigate();
-  const signupUser = useContext(AuthContext);
   const [inputValue, setInputValue] = useState({
     email: "",
     password: "",
     username: "",
   });
   const [passwordType, setPasswordType] = useState("password");
+  const [cookies, setCookie] = useCookies(["name", "Token", "email"]);
   const { email, password, username } = inputValue;
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -38,26 +38,23 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await signupUser({ username: username, email: email, password: password });
+      const response = await signup({ email: email, password: password });
       console.log("resposnse data ", response);
-      if (success) {
-        handleSuccess("signup successful");
+
+      // Check if the login was successful
+      if (response.status) {
+        handleSuccess("Signup successful");
         setCookie("name", response.username);
         setCookie("Token", response.email);
         setCookie("email", response.token);
-        navigate("/")
+        console.log(cookies.Token);
+        navigate("/");
       } else {
-        handleError(message);
+        handleError("Invalid email or password", "signup failed");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error.message);
     }
-    setInputValue({
-      ...inputValue,
-      username: "",
-      email: "",
-      password: "",
-    });
   };
 
   const handleClickShowPassword = () => {
