@@ -1,22 +1,19 @@
-import React, { createContext, useState , useContext } from "react";
+import React, { createContext, useState, useContext } from "react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
+const Backendurl = process.env.BACKEND_URL || "http://localhost:4000";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [setCookie, removeCookie] = useCookies([
-    "accessToken",
-    "refreshToken",
-  ]);
+  const [cookies, setCookie, removeCookie] = useCookies(["accessToken", "refreshToken"]);
   const [user, setUser] = useState(null);
 
- const signup = async (userData) => {
+  const signup = async (userData) => {
     try {
       const response = await axios.post(
-        `${BACKEND_URL}/api/auth/signup`,
+        `${Backendurl}/api/auth/signup`,
         userData
       );
       return response.data;
@@ -28,15 +25,16 @@ export const AuthProvider = ({ children }) => {
   const login = async (userData) => {
     try {
       const response = await axios.post(
-        `${BACKEND_URL}/api/auth/login`,
+        `${Backendurl}/api/auth/login`,
         userData,
         { withCredentials: true }
       );
-      setCookie("accessToken", response.data.accessToken, {
+      // console.log("backend url", Backendurl);
+      setCookie("accessToken", response.data.accessTokenSecret, {
         path: "/",
         maxAge: 900,
       });
-      setCookie("refreshToken", response.data.refreshToken, {
+      setCookie("refreshToken", response.data.refreshTokenSecret, {
         path: "/",
         maxAge: 2592000,
       });
@@ -54,7 +52,6 @@ export const AuthProvider = ({ children }) => {
       }
     }
   };
-  
 
   const logout = () => {
     removeCookie("accessToken", { path: "/" });
@@ -100,8 +97,7 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
-

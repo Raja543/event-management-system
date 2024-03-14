@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { HashLink } from "react-router-hash-link";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-
+ 
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -34,27 +34,27 @@ const Login = () => {
       position: "top-right",
     });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await login({ email: email, password: password });
-      console.log("resposnse data ", response);
 
-      // Check if the login was successful
-      if (response.status == 201) {
-        handleSuccess("login successful");
-        setCookie("name", response.username);
-        setCookie("Token", response.email);
-        setCookie("email", response.token);
-        console.log(cookies.Token);
-        navigate("/");
-      } else {
-        handleError("Invalid email or password", "Login failed");
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const response = await login({ email, password });
+        console.log("Response data:", response);
+    
+        if (response && response.status === 201) {
+          handleSuccess("Login successful");
+          // setCookie("name", response.username);
+          // setCookie("email", response.email);
+          setCookie("accessToken", response.accessTokenSecret);
+          navigate("/");
+        } else {
+          handleError("Invalid email or password", "Login failed");
+        }
+      } catch (error) {
+        console.error("Error occurred during login:", error.message);
+        handleError("An error occurred during login");
       }
-    } catch (error) {
-      console.error(error.message);
-    }
-  };
+    };
 
   const handleClickShowPassword = () => {
     setPasswordType((prevType) =>
