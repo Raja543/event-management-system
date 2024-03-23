@@ -1,22 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { useCookies } from "react-cookie";
 import "react-toastify/dist/ReactToastify.css";
 import { HashLink } from "react-router-hash-link";
 import { Eye, EyeOff } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
- 
+import { AuthContext } from "../context/AuthContext";
+
 const Login = () => {
-  const { login } = useAuth();
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     email: "",
     password: "",
   });
-  const [cookies, setCookie] = useCookies(["name", "Token", "email"]);
   const [passwordType, setPasswordType] = useState("password");
   const { email, password } = inputValue;
+
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setInputValue({
@@ -29,37 +28,31 @@ const Login = () => {
     toast.error(err, {
       position: "top-right",
     });
+
   const handleSuccess = (msg) =>
     toast.success(msg, {
       position: "top-right",
     });
 
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        const response = await login({ email, password });
-        console.log("Response data:", response);
-    
-        if (response && response.status === 201) {
-          handleSuccess("Login successful");
-          // setCookie("name", response.username);
-          // setCookie("email", response.email);
-          setCookie("accessToken", response.accessTokenSecret);
-          navigate("/");
-        } else {
-          handleError("Invalid email or password", "Login failed");
-        }
-      } catch (error) {
-        console.error("Error occurred during login:", error.message);
-        handleError("An error occurred during login");
-      }
-    };
-
   const handleClickShowPassword = () => {
     setPasswordType((prevType) =>
       prevType === "password" ? "text" : "password"
     );
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    try {
+      const success = login(email, password);
+      if (success) {
+        handleSuccess("Login successful!");
+        navigate("/");
+      } else {
+        handleError("Login failed");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -71,7 +64,7 @@ const Login = () => {
           alt="signup-cover"
         />
       </div>
-      <form className="w-3/5 flex flex-col p-20">
+      <form className="w-3/5 flex flex-col p-20" onSubmit={handleSubmit}>
         <h1 className="text-3xl font-bold py-4 text-center">
           Event <span className="text-[#7848F4]">Hive</span>
         </h1>
@@ -90,6 +83,7 @@ const Login = () => {
             placeholder="Enter your email"
             className="border border-gray-300 rounded-lg p-3 my-1 w-full focus:outline-none bg-white"
             onChange={handleOnChange}
+            required
           />
 
           <label htmlFor="password" className="text-lg pt-4">
@@ -104,6 +98,7 @@ const Login = () => {
               autoComplete="current-password"
               className="border border-gray-300 rounded-lg p-3 my-1 w-full focus:outline-none bg-white"
               onChange={handleOnChange}
+              required
             />
             <div
               className="absolute right-0 top-1/2 transform -translate-y-1/2 cursor-pointer"
@@ -118,7 +113,6 @@ const Login = () => {
           </div>
           <button
             type="submit"
-            onClick={handleSubmit}
             className="bg-[#7848F4] text-white text-xl px-10 py-3 rounded-lg my-2 w-60 mx-auto "
           >
             Login

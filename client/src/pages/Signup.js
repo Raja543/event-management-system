@@ -1,23 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { useCookies } from "react-cookie";
+import { AuthContext } from "../context/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { HashLink } from "react-router-hash-link";
 import { Eye, EyeOff } from "lucide-react";
 
 const Signup = () => {
-  const { signup } = useAuth();
+  const { signup } = useContext(AuthContext);
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
+    username: "",
     email: "",
     password: "",
-    username: "",
   });
   const [passwordType, setPasswordType] = useState("password");
-  const [cookies, setCookie] = useCookies(["name", "Token", "email"]);
-  const { email, password, username } = inputValue;
+  const { username, email, password } = inputValue;
+
+  const handleSuccess = (msg) =>
+    toast.success(msg, {
+      position: "top-right",
+    });
+
+  const handleError = (err) =>
+    toast.error(err, {
+      position: "top-right",
+    });
+
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setInputValue({
@@ -26,34 +35,19 @@ const Signup = () => {
     });
   };
 
-  const handleError = (err) =>
-    toast.error(err, {
-      position: "top-right",
-    });
-  const handleSuccess = (msg) =>
-    toast.success(msg, {
-      position: "top-right",
-    });
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      const response = await signup({ email: email, password: password });
-      console.log("resposnse data ", response);
-
-      // Check if the login was successful
-      if (response.status) {
-        handleSuccess("Signup successful");
-        setCookie("name", response.username);
-        setCookie("Token", response.email);
-        setCookie("email", response.token);
-        console.log(cookies.Token);
-        navigate("/");
+      const success = signup(email, password, username);
+      if (success) {
+        handleSuccess("Signup successful!");
+        navigate("/login");
       } else {
-        handleError("Invalid email or password", "signup failed");
+        handleError("Signup failed");
       }
     } catch (error) {
-      console.error(error.message);
+      console.error(error);
+      handleError("Signup failed");
     }
   };
 
@@ -91,6 +85,7 @@ const Signup = () => {
             placeholder="Enter your name"
             className="border border-gray-300 rounded-lg p-3 my-1 w-full focus:outline-none bg-white"
             onChange={handleOnChange}
+            required
           />
           <label htmlFor="email" className="text-lg py-1 px-1">
             Email
@@ -103,6 +98,7 @@ const Signup = () => {
             placeholder="Enter your email"
             className="border border-gray-300 rounded-lg p-3 my-1 w-full focus:outline-none bg-white"
             onChange={handleOnChange}
+            required
           />
 
           <label htmlFor="password" className="text-lg pt-4">
@@ -117,6 +113,7 @@ const Signup = () => {
               autoComplete="current-password"
               className="border border-gray-300 rounded-lg p-3 my-1 w-full focus:outline-none bg-white"
               onChange={handleOnChange}
+              required
             />
             <div
               className="absolute right-0 top-1/2 transform -translate-y-1/2 cursor-pointer"

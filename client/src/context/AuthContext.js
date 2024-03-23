@@ -1,103 +1,137 @@
-import React, { createContext, useState, useContext } from "react";
-import axios from "axios";
+import React, { createContext, useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
+import axios from "axios";
 
 const Backendurl = process.env.BACKEND_URL || "http://localhost:4000";
 
-export const AuthContext = createContext();
+const AuthContext = createContext({
+  isLoggedIn: false,
+  accessToken: null,
+  refreshToken: null,
+  login: () => {},
+  logout: () => {},
+  signup: () => {},
+});
+// Create an Axios instance with credentials enabled
+const axiosInstance = axios.create({
+  withCredentials: true,
+});
 
-export const AuthProvider = ({ children }) => {
-  const [cookies, setCookie, removeCookie] = useCookies(["accessToken", "refreshToken"]);
-  const [user, setUser] = useState(null);
+const AuthProvider = ({ children }) => {
+  const [cookies, setCookie, removeCookie] = useCookies([
+    "accessToken",
+    "refreshToken",
+  ]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [accessToken, setAccessToken] = useState(null);
+  const [refreshToken, setRefreshToken] = useState(null);
 
-  const signup = async (userData) => {
-    try {
-      const response = await axios.post(
-        `${Backendurl}/api/auth/signup`,
-        userData
-      );
-      return response.data;
-    } catch (error) {
-      throw new Error(error.response.data.error);
-    }
-  };
+  useEffect(() => {
+    const getAuthDataFromCookies = () => {
+      const accessToken = cookies.accessToken;
+      const refreshToken = cookies.refreshToken;
 
-  const login = async (userData) => {
-    try {
-      const response = await axios.post(
-        `${Backendurl}/api/auth/login`,
-        userData,
-        { withCredentials: true }
-      );
-      // console.log("backend url", Backendurl);
-      setCookie("accessToken", response.data.accessTokenSecret, {
-        path: "/",
-        maxAge: 900,
-      });
-      setCookie("refreshToken", response.data.refreshTokenSecret, {
-        path: "/",
-        maxAge: 2592000,
-      });
-      setUser(response.data); // Set the user with the data from the response
-    } catch (error) {
-      if (error.response) {
-        // Request was made and server responded with a status code
-        console.error("Login failed:", error.response.data);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error("No response received:", error.request);
-      } else {
-        // Something happened in setting up the request that triggered an error
-        console.error("Error:", error.message);
+      if (accessToken && refreshToken) {
+        return { accessToken, refreshToken };
       }
+
+      return null;
+    };
+
+    const storedAuthData = getAuthDataFromCookies();
+    if (storedAuthData) {
+      setIsLoggedIn(true);
+      setAccessToken(storedAuthData.accessToken);
+      setRefreshToken(storedAuthData.refreshToken);
     }
-  };
+  }, [cookies]);
 
-  const logout = () => {
-    removeCookie("accessToken", { path: "/" });
-    removeCookie("refreshToken", { path: "/" });
-    setUser(null);
-  };
-
-  const refreshToken = async () => {
+  const login = async (email, password) => {
     try {
-      const response = await axios.post(
-        `${process.env.BACKEND_URL}/api/auth/refresh`,
-        {},
-        { withCredentials: true }
+      const response = await axiosInstance.post(
+        `${Backendurl}/api/auth/login`,
+        {
+          email,
+          password,
+        }
       );
-      setCookie("accessToken", response.data.accessToken, {
-        path: "/",
-        maxAge: 900,
-      });
+      const { accessToken, refreshToken } = response.data;
+      storeAuthDataInCookies({ accessToken, refreshToken });
+      setIsLoggedIn(true);
+      setAccessToken(accessToken);
+      setRefreshToken(refreshToken);
     } catch (error) {
-      console.error("Refresh token failed:", error.response.data);
-      logout();
+      console.error(error);
     }
   };
 
-  const isAuthenticated = () => !!user;
+  const signup = async (email, password, username) => {
+    try {
+      const response = await axios.post(`${Backendurl}/api/auth/signup`, {
+        email,
+        password,
+        username,
+      });
+      const success = response.data;
+      if (success) {
+        storeAuthDataInCookies({
+          accessToken: "",
+          refreshToken: "",
+        });
+        setIsLoggedIn(true);
+        setAccessToken(response.data.accessToken);
+        setRefreshToken(response.data.refreshToken);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
 
-  const AuthContextValues = {
-    user,
-    signup,
-    login,
-    logout,
-    refreshToken,
-    isAuthenticated,
+  const logout = async () => {
+    removeAuthDataFromCookies();
+    setIsLoggedIn(false);
+    setAccessToken(null);
+    setRefreshToken(null);
+  };
+
+  const storeAuthDataInCookies = (authData) => {
+    setCookie("accessToken", authData.accessToken, {
+      secure: true,
+      httpOnly: true,
+    });
+    setCookie("refreshToken", authData.refreshToken, {
+      secure: true,
+      httpOnly: true,
+    });
+  };
+
+  const removeAuthDataFromCookies = () => {
+    removeCookie("accessToken");
+    removeCookie("refreshToken");
   };
 
   return (
-    <AuthContext.Provider value={AuthContextValues}>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn,
+        accessToken,
+        refreshToken,
+        login,
+        logout,
+        signup,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
+export { AuthContext, AuthProvider };
+
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+  return React.useContext(AuthContext);
 };
